@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Patrick OConnor <pjo2110@columbia.edu>"]
 
 [dependencies]
+mio = "0.6.7"
