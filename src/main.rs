@@ -42,8 +42,6 @@ fn main() {
                         Err(_) => {}
                     }
 
-
-                    // println!("{:?}", socket);
                 }
                 _ => unreachable!(),
             }
