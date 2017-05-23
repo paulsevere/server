@@ -1,64 +1,56 @@
-// use std::net::{TcpListener, TcpStream};
-extern crate mio;
-use std::net::*;
-use mio::*;
-use mio::tcp::{TcpListener, TcpStream};
-use std::io::Write;
-use mio::tcp::Shutdown::Both;
+#![allow(unused_variables)]
+use std::thread;
+use std::path::Path;
+use std::sync::mpsc::{channel, Sender};
+use std::fs::{self, DirEntry};
+
+use std::io::prelude::*;
+use std::io;
 
 
 
-// use std::iter::Iterator;
 
 fn main() {
-    const SERVER: Token = Token(0);
-    // const CLIENT: Token = Token(1);
+    let path = Path::new("/Users/patrick/Projects");
 
-    let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080);
-    let server = TcpListener::bind(&addr).unwrap();
-
-    let poll = Poll::new().unwrap();
-
-    // Start listening for incoming connections
-    poll.register(&server, SERVER, Ready::readable(), PollOpt::edge())
-        .unwrap();
-    let mut events = Events::with_capacity(1024);
-    loop {
-        poll.poll(&mut events, None).unwrap();
-
-        for event in events.iter() {
-            match event.token() {
-                SERVER => {
-                    println!("Handling connection!");
-                    let (mut socket, addr) = server.accept().unwrap();
-                    let writeResult = socket.write(httpResponse().as_bytes());
-                    match writeResult {
-                        Ok(_) => {
-                            println!("Shutting down");
-
-                            socket.shutdown(Both);
-
-                        }
-                        Err(_) => {}
-                    }
-
-                }
-                _ => unreachable!(),
-            }
-        }
-    }
-
+    visit_dirs(&path, &printDir);
+    // let (tx, rx) = channel();
+    // let tx = createThread(tx);
+    // let tx = createThread(tx);
+    // read_user_input();
+    // println!("{}", rx.recv().unwrap());
+    // println!("{}", rx.recv().unwrap());
 
 }
 
 
-pub fn httpResponse() -> String {
+fn read_user_input() {
+    let mut stdin = io::stdin();
+    let _ = stdin.read(&mut [0u8]).unwrap();
+}
 
-    let message = format!(r#"HTTP-Version = HTTP/2.0
-Content-Type: text/html
 
-{}
-    "#,
-                          "WOW");
-    return String::from(message);
+fn createThread(s: Sender<u8>) -> Sender<u8> {
+    let _s = s.clone();
+    thread::spawn(move || { _s.send(1); });
+    s
+}
+
+fn printDir(dir: &DirEntry) -> fn fn()-> {
+    println!("{:?}", dir);
+}
+
+fn visit_dirs(dir: &Path, cb: &Fn(&DirEntry)) -> io::Result<()> {
+    if dir.is_dir() {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                visit_dirs(&path, cb)?;
+            } else {
+                cb(&entry);
+            }
+        }
+    }
+    Ok(())
 }

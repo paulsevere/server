@@ -4,4 +4,8 @@ version = "0.1.0"
 authors = ["Patrick OConnor <pjo2110@columbia.edu>"]
 
 [dependencies]
-mio = "0.6.7"
+bytes = "0.4"
+futures = "0.1"
+tokio-io = "0.1"
+tokio-proto = "0.1"
+tokio-service = "0.1"
